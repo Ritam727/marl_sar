@@ -12,6 +12,7 @@ class MapCreator:
         self.file = file
         self.height = height if height is not None else 30
         self.width = width if width is not None else 30
+        self.tgt = False
         namedWindow("Map Editor")
         setMouseCallback("Map Editor", self.draw)
 
@@ -20,6 +21,8 @@ class MapCreator:
             self.update()
             imshow("Map Editor", self.array)
             k = waitKey(1) & 0xFF
+            if k == ord("t"):
+                self.tgt = not self.tgt
             if k == 27:
                 break
         self.array = resize(self.array, (self.height, self.width), interpolation = INTER_AREA)
@@ -31,7 +34,10 @@ class MapCreator:
 
     def update(self):
         for change in self.changes:
-            line(self.array, change[0], change[1], (0, 0, 0), 5)
+            if not self.tgt:
+                line(self.array, change[0], change[1], (0, 0, 0), 5)
+            else:
+                line(self.array, change[0], change[1], (1, 0, 0), 10)
         while len(self.changes) > 0:
             self.changes.pop()
 
