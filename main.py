@@ -2,7 +2,7 @@ from grid_maps.maps import Map
 from grid_maps.map_creator import MapCreator
 from argparse import ArgumentParser
 
-from cv2 import imread, imshow, waitKey, destroyAllWindows
+from cv2 import imread, imshow, waitKey, destroyAllWindows, namedWindow, resizeWindow, WINDOW_NORMAL
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -27,16 +27,18 @@ if __name__ == "__main__":
         observations, rewards, terminations, trunctations, infos = map.step(actions)
     map.close()
     
-    ts = map.timestep
+    ts = map.timestep + 1
     
-    for i in range(map.timestep):
+    namedWindow("animation", WINDOW_NORMAL)
+    resizeWindow("animation", 400, 400)
+    for i in range(ts):
         img = imread(f"images/img_{i}.png")
         imshow("animation", img)
         
-        if i == map.timestep - 1:
+        if i == ts - 1:
             k = waitKey(1000) & 0xff
         else:
-            k = waitKey(100) & 0xff
+            k = waitKey(25) & 0xff
         
         if k == 27:
             break

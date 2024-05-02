@@ -1,33 +1,29 @@
-from cv2 import imshow, waitKey, destroyAllWindows, line, EVENT_LBUTTONDOWN, EVENT_MOUSEMOVE, EVENT_LBUTTONUP, setMouseCallback, namedWindow, resize, imwrite, INTER_AREA
+from cv2 import imshow, waitKey, destroyAllWindows, line, EVENT_LBUTTONDOWN, EVENT_MOUSEMOVE, EVENT_LBUTTONUP, setMouseCallback, namedWindow, resize, imwrite, INTER_AREA, resizeWindow, WINDOW_NORMAL
 from numpy import array
 from numpy.random import random
 
 class MapCreator:
     def __init__(self, file, height = None, width = None):
-        self.array = array([[[1.0] * 3] * 200] * 200)
+        self.array = array([[[1.0] * 3] * 30] * 30)
         self.m_x = -1
         self.m_y = -1
         self.drawing = False
         self.changes = []
         self.file = file
-        self.height = height if height is not None else 30
-        self.width = width if width is not None else 30
         self.tgt = False
-        namedWindow("Map Editor")
+        namedWindow("Map Editor", WINDOW_NORMAL)
         setMouseCallback("Map Editor", self.draw)
 
     def render(self):
         while True:
             self.update()
+            resizeWindow("Map Editor", 400, 400)
             imshow("Map Editor", self.array)
             k = waitKey(1) & 0xFF
             if k == ord("t"):
                 self.tgt = not self.tgt
             if k == 27:
                 break
-        self.array = resize(self.array, (self.height, self.width), interpolation = INTER_AREA)
-        self.array = (self.array < 0.5).astype("int32")
-        self.array = (1 - self.array)
         self.array *= 255
         imwrite(self.file, self.array)
         destroyAllWindows()
@@ -35,9 +31,9 @@ class MapCreator:
     def update(self):
         for change in self.changes:
             if not self.tgt:
-                line(self.array, change[0], change[1], (0, 0, 0), 5)
+                line(self.array, change[0], change[1], (0, 0, 0), 1)
             else:
-                line(self.array, change[0], change[1], (1, 0, 0), 10)
+                line(self.array, change[0], change[1], (1, 0, 0), 1)
         while len(self.changes) > 0:
             self.changes.pop()
 
